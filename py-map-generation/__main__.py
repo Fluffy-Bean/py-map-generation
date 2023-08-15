@@ -1,13 +1,5 @@
 import random
-from tkinter import *
 from PIL import Image
-
-
-root = Tk()
-resX = 1000
-resY = 500
-canvas = Canvas(root, bg="blue", height=resY, width=resX)
-canvas.pack()
 
 
 class GenerateMap:
@@ -101,27 +93,6 @@ class Node:
     def set_active(self):
         self.active = True
 
-    def render(self, sea_level: int = 0):
-        if self.elevation <= (-25):
-            color = 'dark blue'
-        elif self.elevation <= sea_level:
-            color = 'blue'
-        elif self.elevation <= 25 and self.temperature <= 0:
-            color = 'light grey'
-        elif self.elevation <= 25 and self.temperature <= 5:
-            color = 'green'
-        elif self.elevation <= 25 and self.temperature <= 10:
-            color = 'dark green'
-        elif self.elevation <= 25 and self.temperature <= 100:
-            color = 'yellow'
-        else:
-            color = 'white'
-        a = self.position[0] * 5
-        b = self.position[1] * 5
-        c = a + 5
-        d = b + 5
-        canvas.create_rectangle(a, b, c, d, fill=color, outline=color)
-
 
 if __name__ == '__main__':
     world = GenerateMap((200, 100))
@@ -129,37 +100,18 @@ if __name__ == '__main__':
     def process1():
         [n.set_active() for n in world.nodes]
         world.smooth_map()
-        canvas.delete('all')
-        [n.render() for n in world.nodes]
-        canvas.create_text(5, 5, anchor='nw', text='Smooth')
-        canvas.update()
-
 
     def process2():
         [n.set_active() for n in world.nodes]
         world.lower_land()
-        canvas.delete('all')
-        [n.render() for n in world.nodes]
-        canvas.create_text(5, 5, anchor='nw', text='Lower')
-        canvas.update()
-
 
     def process3():
         [n.set_active() for n in world.nodes]
         world.raise_land()
-        canvas.delete('all')
-        [n.render() for n in world.nodes]
-        canvas.create_text(5, 5, anchor='nw', text='Raise')
-        canvas.update()
-
 
     def process4():
         [n.set_active() for n in world.nodes]
         world.raise_temperature()
-        canvas.delete('all')
-        [n.render() for n in world.nodes]
-        canvas.create_text(5, 5, anchor='nw', text='Heat')
-        canvas.update()
 
 
     print('0')
@@ -174,10 +126,8 @@ if __name__ == '__main__':
     for i in range(100):
         process1()
 
-    mainloop()
-
-
     img = Image.new('RGB', (200, 100), color='blue')
+
     for n in world.nodes:
         if n.elevation <= (-25):
             img.putpixel(n.position, (0, 0, 0))
@@ -194,4 +144,4 @@ if __name__ == '__main__':
         else:
             img.putpixel(n.position, (255, 255, 255))
 
-    img.save('test.png')
+    img.save('map.png')
