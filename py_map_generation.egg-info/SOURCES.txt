@@ -1,0 +1,10 @@
+README.md
+pyproject.toml
+setup.py
+py_map_generation/__init__.py
+py_map_generation/main.py
+py_map_generation.egg-info/PKG-INFO
+py_map_generation.egg-info/SOURCES.txt
+py_map_generation.egg-info/dependency_links.txt
+py_map_generation.egg-info/requires.txt
+py_map_generation.egg-info/top_level.txt
