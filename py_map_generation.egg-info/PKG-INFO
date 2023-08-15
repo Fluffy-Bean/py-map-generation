@@ -1,8 +1,0 @@
-Metadata-Version: 2.1
-Name: py-map-generation
-Version: 0.1.0
-Summary: Simple python world generation
-Author: Michał Gdula (Fluffy-Bean)
-Author-email: <michal-gdula@protonmail.com>
-License: Unlicense
-Classifier: Programming Language :: Python :: 3
