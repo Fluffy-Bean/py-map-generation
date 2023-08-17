@@ -17,7 +17,7 @@ setup(
     description="Simple python world generation",
     packages=find_packages(),
     py_modules=["py_map_generation"],
-    python_requires="==3.*,>=3.7.0",
+    python_requires=">=3.7, <4",
     install_requires=["numpy"],
     classifiers=[
         "Programming Language :: Python :: 3",
