@@ -165,12 +165,18 @@ class GenerateMap:
         file_path = os.path.join(full_path, file)
 
         colours = {
-            "sea": (0, 0, 165),
-            "ice": (130, 215, 200),
-            "snow": (205, 240, 250),
-            "grassland": (30, 115, 30),
-            "savanna": (10, 175, 5),
-            "desert": (230, 215, 135),
+            # "sea": (0, 0, 165),
+            # "ice": (130, 215, 200),
+            # "snow": (205, 240, 250),
+            # "grassland": (30, 115, 30),
+            # "savanna": (10, 175, 5),
+            # "desert": (230, 215, 135),
+            "sea": (66, 77, 79),
+            "ice": (149, 155, 161),
+            "snow": (149, 155, 161),
+            "grassland": (48, 50, 23),
+            "savanna": (64, 47, 30),
+            "desert": (132, 102, 76),
         }
 
         for node in numpy.ndenumerate(self.nodes):
