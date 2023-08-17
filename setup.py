@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """
 Python Map Generation
 =====================
@@ -15,9 +17,8 @@ setup(
     description="Simple python world generation",
     packages=find_packages(),
     py_modules=["py_map_generation"],
-    install_requires=[
-        "numpy"
-    ],
+    python_requires="==3.*,>=3.7.0",
+    install_requires=["numpy"],
     classifiers=[
         "Programming Language :: Python :: 3",
     ],
