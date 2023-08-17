@@ -6,8 +6,10 @@ Python Map Generation
 Simple python world generation
 """
 
+import os
 import random
 import numpy
+from PIL import Image
 
 
 class GenerateMap:
@@ -20,10 +22,18 @@ class GenerateMap:
         """
         random.seed(seed)
 
-        self.border = 15
+        self._map_border = 17
+        self._land_density = 70
+        self._temp_and_elev_choice = (-100, 200)
+        self._environment = {
+            "ice": -5,
+            "snow": 0,
+            "grassland": 10,
+            "savanna": 20,
+            "desert": 35,
+        }
+
         self.sea_level = 0
-        self.density = 70
-        self.choice = (-100, 200)
         self.nodes = numpy.array([])
 
         self.dimension = dimension
@@ -40,7 +50,12 @@ class GenerateMap:
         for x in range(self.dimension[0]):
             for y in range(self.dimension[1]):
                 self.nodes = numpy.append(
-                    self.nodes, {"elevation": 0, "temperature": 0}
+                    self.nodes,
+                    {
+                        "elevation": 0,
+                        "temperature": 0,
+                        "environment": "grassland",
+                    },
                 )
 
         self.nodes = numpy.reshape(self.nodes, self.dimension)
@@ -52,12 +67,14 @@ class GenerateMap:
         """
         for node in numpy.ndenumerate(self.nodes):
             if (
-                self.border < node[0][0] < (self.dimension[0] - self.border)
-                and self.border < node[0][1] < (self.dimension[1] - self.border)
-                and random.randint(0, 1000) <= self.density
+                self._map_border < node[0][0] < (self.dimension[0] - self._map_border)
+                and self._map_border
+                < node[0][1]
+                < (self.dimension[1] - self._map_border)
+                and random.randint(0, 1000) <= self._land_density
             ):
-                node[1]["elevation"] = random.choice(self.choice)
-                node[1]["temperature"] = random.choice(self.choice)
+                node[1]["elevation"] = random.choice(self._temp_and_elev_choice)
+                node[1]["temperature"] = random.choice(self._temp_and_elev_choice)
 
     def _smooth_map(self) -> None:
         """
@@ -105,10 +122,20 @@ class GenerateMap:
         :return: None
         """
         for node in numpy.ndenumerate(self.nodes):
-            if node[1]["elevation"] > 0 and random.randrange(0, 100) < 1:
+            if node[1]["elevation"] > 0 and random.randrange(0, 125) < 1:
                 node[1]["temperature"] += 10
 
-    def generate_map(self, multiplier: int = 1) -> None:
+    def _set_environment(self) -> None:
+        for node in numpy.ndenumerate(self.nodes):
+            if node[1]["elevation"] < self.sea_level:
+                node[1]["environment"] = "sea"
+            else:
+                for environment in self._environment:
+                    if node[1]["temperature"] <= self._environment[environment]:
+                        node[1]["environment"] = environment
+                        break
+
+    def generate_map(self, multiplier: int = 1) -> numpy.array:
         """
         :param multiplier: how many times to run the generation
         :return: None
@@ -119,53 +146,41 @@ class GenerateMap:
         for _ in range(15 * multiplier):
             self._lower_sea()
             self._raise_land()
-        for _ in range(125 * multiplier):
+        for _ in range(115 * multiplier):
             self._smooth_map()
 
-    # def make_img(self, file: str = "map.png") -> None:
-    #     """
-    #     Makes an image of the map
-    #     :param file: file name to save the image as, defaults to `map.png`
-    #     :return: None
-    #     """
-    #     from PIL import Image
-    #
-    #     img = Image.new("RGB", self.dimension)
-    #
-    #     colours = {
-    #         "deep_water": (0, 0, 165),
-    #         "shallow_water": (80, 78, 250),
-    #         "ice": (130, 215, 200),
-    #         "snow": (205, 240, 250),
-    #         "forest": (30, 115, 30),
-    #         "planes": (10, 175, 5),
-    #         "desert": (230, 215, 135),
-    #     }
-    #
-    #     for node in numpy.ndenumerate(self.nodes):
-    #         if node[1]["elevation"] <= (-25):
-    #             img.putpixel(node[0], colours["deep_water"])
-    #         elif node[1]["elevation"] <= self.sea_level:
-    #             img.putpixel(node[0], colours["shallow_water"])
-    #         else:
-    #             if node[1]["temperature"] <= -10:
-    #                 img.putpixel(node[0], colours["ice"])
-    #             elif node[1]["temperature"] <= 0:
-    #                 img.putpixel(node[0], colours["snow"])
-    #             elif node[1]["temperature"] <= 10:
-    #                 img.putpixel(node[0], colours["forest"])
-    #             elif node[1]["temperature"] <= 20:
-    #                 img.putpixel(node[0], colours["planes"])
-    #             elif node[1]["temperature"] <= 38:
-    #                 img.putpixel(node[0], colours["desert"])
-    #             else:
-    #                 img.putpixel(node[0], (0, 0, 0))
-    #
-    #     img.save(file)
-    #     img.close()
+        self._set_environment()
+
+        return self.nodes
+
+    def make_map(self, file: str = "map.png", full_path: str = ".") -> None:
+        """
+        Makes an image of the map
+        :param file: file name to save the image as, defaults to `map.png`
+        :param full_path: full path to save the image to, defaults to `.` (current directory)
+        :return: None
+        """
+
+        image = Image.new("RGB", self.dimension)
+        file_path = os.path.join(full_path, file)
+
+        colours = {
+            "sea": (0, 0, 165),
+            "ice": (130, 215, 200),
+            "snow": (205, 240, 250),
+            "grassland": (30, 115, 30),
+            "savanna": (10, 175, 5),
+            "desert": (230, 215, 135),
+        }
+
+        for node in numpy.ndenumerate(self.nodes):
+            image.putpixel(node[0], colours[node[1]["environment"]])
+
+        image.save(file_path)
+        image.close()
 
 
 if __name__ == "__main__":
-    world = GenerateMap((200, 200))
+    world = GenerateMap((250, 250))
     world.generate_map()
-    # world.make_img()
+    world.make_map()

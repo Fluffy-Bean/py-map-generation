@@ -10,7 +10,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="py-map-generation",
-    version="0.1.1",
+    version="0.1.2",
     license="Unlicensed",
     author="Michał Gdula (Fluffy-Bean)",
     author_email="<michal-gdula@protonmail.com>",
@@ -18,7 +18,7 @@ setup(
     packages=find_packages(),
     py_modules=["py_map_generation"],
     python_requires=">=3.7, <4",
-    install_requires=["numpy"],
+    install_requires=["numpy", "Pillow"],
     classifiers=[
         "Programming Language :: Python :: 3.7",
         "License :: OSI Approved :: Unlicensed",
