@@ -9,7 +9,7 @@ packages = [{include = "py_map_generation"}]
 [tool.poetry.dependencies]
 python = "^3.11"
 numpy = "^1.25.2"
-pillow = "^10.0.0"
+pillow = "^10.0.1"
 black = "^23.7.0"
 
 
